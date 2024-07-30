@@ -5,3 +5,5 @@ out/
 public/
 package-lock.json
 next.config.*
+# github actions内で生成されるディレクトリ
+cache/
