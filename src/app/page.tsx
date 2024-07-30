@@ -1,23 +1,22 @@
 'use client'
-import Image from "next/image";
-import { generateClient } from "aws-amplify/data"
-import { Authenticator } from "@aws-amplify/ui-react";
-import { Amplify } from "aws-amplify"
 import type { Schema } from '@/amplify/data/resource'
-import outputs from "@/amplify_outputs.json"
-import { useEffect, useState } from "react";
-import "@aws-amplify/ui-react/styles.css";
+import outputs from '@/amplify_outputs.json'
+import { Authenticator } from '@aws-amplify/ui-react'
+import '@aws-amplify/ui-react/styles.css'
+import { Amplify } from 'aws-amplify'
+import { generateClient } from 'aws-amplify/data'
+import { useEffect, useState } from 'react'
 
 Amplify.configure(outputs)
 
 const client = generateClient<Schema>()
 
 export default function Home() {
-  const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([])
+  const [todos, setTodos] = useState<Array<Schema['Todo']['type']>>([])
 
   const listTodos = () => {
     client.models.Todo.observeQuery().subscribe({
-      next: data => setTodos([...data.items])
+      next: (data) => setTodos([...data.items]),
     })
   }
 
@@ -27,7 +26,7 @@ export default function Home() {
 
   const createTodo = () => {
     client.models.Todo.create({
-      content: window.prompt("Todo content")
+      content: window.prompt('Todo content'),
     })
   }
 
@@ -43,7 +42,7 @@ export default function Home() {
           <button onClick={createTodo}>+ new</button>
           <button onClick={signOut}>Sign out</button>
           <ul>
-            {todos.map(todo => (
+            {todos.map((todo) => (
               <li key={todo.id} onClick={() => deleteTodo(todo.id)}>
                 {todo.content}
               </li>
@@ -52,5 +51,5 @@ export default function Home() {
         </main>
       )}
     </Authenticator>
-  );
+  )
 }
