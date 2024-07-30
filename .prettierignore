@@ -1,0 +1,7 @@
+node_modules/
+.next/
+.amplify/
+out/
+public/
+package-lock.json
+next.config.*
