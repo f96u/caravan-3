@@ -11,7 +11,7 @@
     "lint:prettier": "prettier --check .",
     "fix": "run-s fix:prettier fix:eslint",
     "fix:eslint": "npm run lint:eslint --fix",
-    "fix:prettier": "npm run lint:prettier --write"
+    "fix:prettier": "prettier --write --check ."
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^6.1.14",
@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "@aws-amplify/backend": "^1.0.4",
-    "@aws-amplify/backend-cli": "^1.2.1",
+    "@aws-amplify/backend-cli": "^0.11.1",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
