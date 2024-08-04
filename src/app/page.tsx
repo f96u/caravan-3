@@ -6,6 +6,7 @@ import '@aws-amplify/ui-react/styles.css'
 import { Amplify } from 'aws-amplify'
 import { generateClient } from 'aws-amplify/data'
 import { useEffect, useState } from 'react'
+import { Clock } from '../components/Clock'
 
 Amplify.configure(outputs)
 
@@ -37,7 +38,8 @@ export default function Home() {
   return (
     <Authenticator>
       {({ signOut, user }) => (
-        <main>
+        <main className="w-full">
+          <Clock />
           <h1>{user?.signInDetails?.loginId}&aposs todos</h1>
           <button onClick={createTodo}>+ new</button>
           <button onClick={signOut}>Sign out</button>
