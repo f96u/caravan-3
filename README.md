@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Caravan-3
+ブラウザのスタートアップページの作成
 
-## Getting Started
+# Development
+## 環境構築
+amplify_outputs.jsonをダウンロードし、`caravan-3`直下に配置してください。
 
-First, run the development server:
+クラウドサンドボックスを起動することで本番ブランチに影響を与えずにバックエンドを更新することができます。
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+`$npx ampx sandbox`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+初回は5分ほど展開にかかります。
+多くの場合、`$npm run dev`と一緒に利用する想定です。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## package
+npmで管理しています。
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+node: 20.15.1
+npm: 10.7.0
 
-## Learn More
+### 個別のパッケージ
+初期に`$npx create-next-app`で生成されるパッケージについては説明を省略しています。
 
-To learn more about Next.js, take a look at the following resources:
+- aws-amplify
+  - Amplifyをローカルで動作させるために利用
+- @aws-amplify/backend @aws-amplify/backend-cli
+  - Amplifyの開発のために利用
+- @aws-amplify/ui-react
+  - Amplifyを利用したUIパッケージとして利用
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## 起動方法
+`$npm run install`後、`$npm run dev`で起動できます。
