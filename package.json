@@ -6,7 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "run-p -l -c --aggregate-output lint:*",
+    "lint:eslint": "next lint",
+    "lint:prettier": "prettier --check .",
+    "fix": "run-s fix:prettier fix:eslint",
+    "fix:eslint": "npm run lint:eslint --fix",
+    "fix:prettier": "prettier --write --check ."
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^6.1.14",
