@@ -38,7 +38,7 @@ export default function Home() {
   return (
     <Authenticator>
       {({ signOut, user }) => (
-        <main className="w-full">
+        <main>
           <Clock />
           <h1>{user?.signInDetails?.loginId}&aposs todos</h1>
           <button onClick={createTodo}>+ new</button>
