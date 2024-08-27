@@ -16,15 +16,10 @@ const client = generateClient<Schema>()
 export default function Home() {
   const [todos, setTodos] = useState<Array<Schema['Todo']['type']>>([])
 
-
   useEffect(() => {
-    const sub = client
-      .models
-      .Todo
-      .observeQuery()
-      .subscribe({
-        next: ({ items }) => setTodos([...items])
-      })
+    const sub = client.models.Todo.observeQuery().subscribe({
+      next: ({ items }) => setTodos([...items]),
+    })
     return () => sub.unsubscribe()
   }, [])
 
@@ -42,7 +37,7 @@ export default function Home() {
   const toggleDone = async (todo: Schema['Todo']['type']) => {
     const { errors } = await client.models.Todo.update({
       id: todo.id,
-      isDone: !todo.isDone
+      isDone: !todo.isDone,
     })
 
     if (errors) {
@@ -60,8 +55,15 @@ export default function Home() {
           <button onClick={signOut}>Sign out</button>
           <ul>
             {todos.map((todo) => (
-              <li key={todo.id} className="flex items-center gap-2" onClick={() => toggleDone(todo)}>
-                <div className="size-4 border">{todo.isDone && <CheckIcon />}</div>{todo.content}
+              <li
+                key={todo.id}
+                className="flex items-center gap-2"
+                onClick={() => toggleDone(todo)}
+              >
+                <div className="size-4 border">
+                  {todo.isDone && <CheckIcon />}
+                </div>
+                {todo.content}
               </li>
             ))}
           </ul>
