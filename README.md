@@ -12,6 +12,8 @@ amplify_outputs.jsonをダウンロードし、`caravan-3`直下に配置して�
 
 `$npx ampx sandbox`
 
+profileを設定している場合は`--profile`オプションを指定することができます。
+
 初回は5分ほど展開にかかります。
 多くの場合、`$npm run dev`と一緒に利用する想定です。
 

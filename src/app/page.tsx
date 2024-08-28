@@ -7,6 +7,7 @@ import { Amplify } from 'aws-amplify'
 import { generateClient } from 'aws-amplify/data'
 import { useEffect, useState } from 'react'
 import { Clock } from '../components/Clock'
+import { CheckIcon } from '../svgs/CheckIcon'
 
 Amplify.configure(outputs)
 
@@ -15,24 +16,33 @@ const client = generateClient<Schema>()
 export default function Home() {
   const [todos, setTodos] = useState<Array<Schema['Todo']['type']>>([])
 
-  const listTodos = () => {
-    client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
-    })
-  }
-
   useEffect(() => {
-    listTodos()
+    const sub = client.models.Todo.observeQuery().subscribe({
+      next: ({ items }) => setTodos([...items]),
+    })
+    return () => sub.unsubscribe()
   }, [])
 
-  const createTodo = () => {
-    client.models.Todo.create({
+  const createTodo = async () => {
+    const { errors } = await client.models.Todo.create({
       content: window.prompt('Todo content'),
+      isDone: false,
     })
+
+    if (errors) {
+      console.error(errors)
+    }
   }
 
-  const deleteTodo = (id: string) => {
-    client.models.Todo.delete({ id })
+  const toggleDone = async (todo: Schema['Todo']['type']) => {
+    const { errors } = await client.models.Todo.update({
+      id: todo.id,
+      isDone: !todo.isDone,
+    })
+
+    if (errors) {
+      console.error(errors)
+    }
   }
 
   return (
@@ -45,7 +55,14 @@ export default function Home() {
           <button onClick={signOut}>Sign out</button>
           <ul>
             {todos.map((todo) => (
-              <li key={todo.id} onClick={() => deleteTodo(todo.id)}>
+              <li
+                key={todo.id}
+                className="flex items-center gap-2"
+                onClick={() => toggleDone(todo)}
+              >
+                <div className="size-4 border">
+                  {todo.isDone && <CheckIcon />}
+                </div>
                 {todo.content}
               </li>
             ))}
