@@ -7,7 +7,7 @@ import { Amplify } from 'aws-amplify'
 import { generateClient } from 'aws-amplify/data'
 import { useEffect, useState } from 'react'
 import { Clock } from '../components/Clock'
-import { CheckIcon } from '../svgs/CheckIcon'
+import { TodoRow } from '@/src/components/TodoRow'
 
 Amplify.configure(outputs)
 
@@ -34,17 +34,6 @@ export default function Home() {
     }
   }
 
-  const toggleDone = async (todo: Schema['Todo']['type']) => {
-    const { errors } = await client.models.Todo.update({
-      id: todo.id,
-      isDone: !todo.isDone,
-    })
-
-    if (errors) {
-      console.error(errors)
-    }
-  }
-
   return (
     <Authenticator>
       {({ signOut, user }) => (
@@ -58,12 +47,8 @@ export default function Home() {
               <li
                 key={todo.id}
                 className="flex items-center gap-2"
-                onClick={() => toggleDone(todo)}
               >
-                <div className="size-4 border">
-                  {todo.isDone && <CheckIcon />}
-                </div>
-                {todo.content}
+                <TodoRow todo={todo} />
               </li>
             ))}
           </ul>
