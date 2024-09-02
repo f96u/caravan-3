@@ -1,13 +1,13 @@
 'use client'
 import type { Schema } from '@/amplify/data/resource'
 import outputs from '@/amplify_outputs.json'
+import { TodoRow } from '@/src/components/TodoRow'
 import { Authenticator } from '@aws-amplify/ui-react'
 import '@aws-amplify/ui-react/styles.css'
 import { Amplify } from 'aws-amplify'
 import { generateClient } from 'aws-amplify/data'
 import { useEffect, useState } from 'react'
 import { Clock } from '../components/Clock'
-import { TodoRow } from '@/src/components/TodoRow'
 
 Amplify.configure(outputs)
 
@@ -44,10 +44,7 @@ export default function Home() {
           <button onClick={signOut}>Sign out</button>
           <ul>
             {todos.map((todo) => (
-              <li
-                key={todo.id}
-                className="flex items-center gap-2"
-              >
+              <li key={todo.id} className="flex items-center gap-2">
                 <TodoRow todo={todo} />
               </li>
             ))}

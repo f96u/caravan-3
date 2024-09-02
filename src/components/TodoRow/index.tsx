@@ -56,7 +56,11 @@ export const TodoRow = ({ todo }: Props) => {
         {todo.isDone && <CheckIcon />}
       </button>
       {isEdit ? (
-        <input value={tmpEditingTodo} onChange={e => setTmpEditingTodo(e.target.value)} onBlur={editTodo} />
+        <input
+          value={tmpEditingTodo}
+          onChange={(e) => setTmpEditingTodo(e.target.value)}
+          onBlur={editTodo}
+        />
       ) : (
         <>
           {todo.content}
