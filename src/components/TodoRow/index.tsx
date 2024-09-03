@@ -13,9 +13,11 @@ type Props = {
   todo: Schema['Todo']['type']
 }
 export const TodoRow = ({ todo }: Props) => {
-  const [editState, setEditState] = useState<null | 'content' | 'executionDate'>(null)
+  const [editState, setEditState] = useState<
+    null | 'content' | 'executionDate'
+  >(null)
   const [tmpValue, setTmpValue] = useState('')
-  
+
   const toggleDone = async () => {
     const { errors } = await client.models.Todo.update({
       id: todo.id,
@@ -83,8 +85,13 @@ export const TodoRow = ({ todo }: Props) => {
           onBlur={editContent}
         />
       ) : editState === 'executionDate' ? (
-        <input type="date" value={tmpValue} onChange={e => setTmpValue(e.target.value)} onBlur={editExecutionDate} />  
-        ) : (
+        <input
+          type="date"
+          value={tmpValue}
+          onChange={(e) => setTmpValue(e.target.value)}
+          onBlur={editExecutionDate}
+        />
+      ) : (
         <>
           {todo.content}-{todo.executionDate}
           <button onClick={startEditContent}>
@@ -96,7 +103,7 @@ export const TodoRow = ({ todo }: Props) => {
           <button onClick={remove}>
             <Trash className="size-4" />
           </button>
-        </>    
+        </>
       )}
     </>
   )
