@@ -1,13 +1,13 @@
 'use client'
 import type { Schema } from '@/amplify/data/resource'
 import outputs from '@/amplify_outputs.json'
+import { TodoRow } from '@/src/components/TodoRow'
 import { Authenticator } from '@aws-amplify/ui-react'
 import '@aws-amplify/ui-react/styles.css'
 import { Amplify } from 'aws-amplify'
 import { generateClient } from 'aws-amplify/data'
 import { useEffect, useState } from 'react'
 import { Clock } from '../components/Clock'
-import { CheckIcon } from '../svgs/CheckIcon'
 
 Amplify.configure(outputs)
 
@@ -34,17 +34,6 @@ export default function Home() {
     }
   }
 
-  const toggleDone = async (todo: Schema['Todo']['type']) => {
-    const { errors } = await client.models.Todo.update({
-      id: todo.id,
-      isDone: !todo.isDone,
-    })
-
-    if (errors) {
-      console.error(errors)
-    }
-  }
-
   return (
     <Authenticator>
       {({ signOut, user }) => (
@@ -55,15 +44,8 @@ export default function Home() {
           <button onClick={signOut}>Sign out</button>
           <ul>
             {todos.map((todo) => (
-              <li
-                key={todo.id}
-                className="flex items-center gap-2"
-                onClick={() => toggleDone(todo)}
-              >
-                <div className="size-4 border">
-                  {todo.isDone && <CheckIcon />}
-                </div>
-                {todo.content}
+              <li key={todo.id} className="flex items-center gap-2">
+                <TodoRow todo={todo} />
               </li>
             ))}
           </ul>
