@@ -1,9 +1,11 @@
 import type { Schema } from '@/amplify/data/resource'
+import { Calendar } from '@/src/svgs/Calendar'
 import { CheckIcon } from '@/src/svgs/CheckIcon'
 import { PencilSquare } from '@/src/svgs/PencilSquare'
 import { Trash } from '@/src/svgs/Trash'
 import { generateClient } from 'aws-amplify/api'
 import { useState } from 'react'
+import { formatDate } from './formatDate'
 
 const client = generateClient<Schema>()
 
@@ -11,8 +13,11 @@ type Props = {
   todo: Schema['Todo']['type']
 }
 export const TodoRow = ({ todo }: Props) => {
-  const [isEdit, setIsEdit] = useState(false)
-  const [tmpEditingTodo, setTmpEditingTodo] = useState(todo.content ?? '')
+  const [editState, setEditState] = useState<
+    null | 'content' | 'executionDate'
+  >(null)
+  const [tmpValue, setTmpValue] = useState('')
+
   const toggleDone = async () => {
     const { errors } = await client.models.Todo.update({
       id: todo.id,
@@ -24,16 +29,34 @@ export const TodoRow = ({ todo }: Props) => {
     }
   }
 
-  const startEdit = () => {
-    setIsEdit(true)
+  const startEditContent = () => {
+    setEditState('content')
+    setTmpValue(todo.content ?? '')
   }
 
-  const editTodo = async () => {
+  const startEditExecutionDate = () => {
+    setEditState('executionDate')
+    setTmpValue(todo.executionDate ?? formatDate(new Date()))
+  }
+
+  const editContent = async () => {
     const { errors } = await client.models.Todo.update({
       id: todo.id,
-      content: tmpEditingTodo,
+      content: tmpValue,
     })
-    setIsEdit(false)
+    setEditState(null)
+
+    if (errors) {
+      console.error(errors)
+    }
+  }
+
+  const editExecutionDate = async () => {
+    const { errors } = await client.models.Todo.update({
+      id: todo.id,
+      executionDate: tmpValue,
+    })
+    setEditState(null)
 
     if (errors) {
       console.error(errors)
@@ -55,17 +78,27 @@ export const TodoRow = ({ todo }: Props) => {
       <button className="size-4 border" onClick={toggleDone}>
         {todo.isDone && <CheckIcon />}
       </button>
-      {isEdit ? (
+      {editState === 'content' ? (
         <input
-          value={tmpEditingTodo}
-          onChange={(e) => setTmpEditingTodo(e.target.value)}
-          onBlur={editTodo}
+          value={tmpValue}
+          onChange={(e) => setTmpValue(e.target.value)}
+          onBlur={editContent}
+        />
+      ) : editState === 'executionDate' ? (
+        <input
+          type="date"
+          value={tmpValue}
+          onChange={(e) => setTmpValue(e.target.value)}
+          onBlur={editExecutionDate}
         />
       ) : (
         <>
-          {todo.content}
-          <button onClick={startEdit}>
+          {todo.content}-{todo.executionDate}
+          <button onClick={startEditContent}>
             <PencilSquare className="size-4" />
+          </button>
+          <button onClick={startEditExecutionDate}>
+            <Calendar className="size-4" />
           </button>
           <button onClick={remove}>
             <Trash className="size-4" />
