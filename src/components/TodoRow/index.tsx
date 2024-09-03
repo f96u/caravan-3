@@ -13,10 +13,9 @@ type Props = {
   todo: Schema['Todo']['type']
 }
 export const TodoRow = ({ todo }: Props) => {
-  const [isEditContent, setIsEditContent] = useState(false)
-  const [isEditExecutionDate, setIsEditExecutionDate] = useState(false)
-  const [tmpEditingTodo, setTmpEditingTodo] = useState(todo.content ?? '')
-  const [tmpEditingExecutionDate, setTmpEditingExecution] = useState(todo.executionDate ?? formatDate(new Date()))
+  const [editState, setEditState] = useState<null | 'content' | 'executionDate'>(null)
+  const [tmpValue, setTmpValue] = useState('')
+  
   const toggleDone = async () => {
     const { errors } = await client.models.Todo.update({
       id: todo.id,
@@ -29,15 +28,21 @@ export const TodoRow = ({ todo }: Props) => {
   }
 
   const startEditContent = () => {
-    setIsEditContent(true)
+    setEditState('content')
+    setTmpValue(todo.content ?? '')
+  }
+
+  const startEditExecutionDate = () => {
+    setEditState('executionDate')
+    setTmpValue(todo.executionDate ?? formatDate(new Date()))
   }
 
   const editContent = async () => {
     const { errors } = await client.models.Todo.update({
       id: todo.id,
-      content: tmpEditingTodo,
+      content: tmpValue,
     })
-    setIsEditContent(false)
+    setEditState(null)
 
     if (errors) {
       console.error(errors)
@@ -47,17 +52,13 @@ export const TodoRow = ({ todo }: Props) => {
   const editExecutionDate = async () => {
     const { errors } = await client.models.Todo.update({
       id: todo.id,
-      executionDate: tmpEditingExecutionDate,
+      executionDate: tmpValue,
     })
-    setIsEditExecutionDate(false)
+    setEditState(null)
 
     if (errors) {
       console.error(errors)
     }
-  }
-
-  const startEditExecutionDate = () => {
-    setIsEditExecutionDate(true)
   }
 
   const remove = async () => {
@@ -75,15 +76,15 @@ export const TodoRow = ({ todo }: Props) => {
       <button className="size-4 border" onClick={toggleDone}>
         {todo.isDone && <CheckIcon />}
       </button>
-      {isEditContent && (
+      {editState === 'content' ? (
         <input
-          value={tmpEditingTodo}
-          onChange={(e) => setTmpEditingTodo(e.target.value)}
+          value={tmpValue}
+          onChange={(e) => setTmpValue(e.target.value)}
           onBlur={editContent}
         />
-      )}
-      {isEditExecutionDate && <input type="date" value={tmpEditingExecutionDate} onChange={e => setTmpEditingExecution(e.target.value)} onBlur={editExecutionDate} />}
-      {!isEditContent && !isEditExecutionDate && (
+      ) : editState === 'executionDate' ? (
+        <input type="date" value={tmpValue} onChange={e => setTmpValue(e.target.value)} onBlur={editExecutionDate} />  
+        ) : (
         <>
           {todo.content}-{todo.executionDate}
           <button onClick={startEditContent}>
@@ -95,7 +96,7 @@ export const TodoRow = ({ todo }: Props) => {
           <button onClick={remove}>
             <Trash className="size-4" />
           </button>
-        </>
+        </>    
       )}
     </>
   )
