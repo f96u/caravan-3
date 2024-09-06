@@ -80,12 +80,14 @@ export const TodoRow = ({ todo }: Props) => {
       </button>
       {editState === 'content' ? (
         <input
+          data-testid="edit-content"
           value={tmpValue}
           onChange={(e) => setTmpValue(e.target.value)}
           onBlur={editContent}
         />
       ) : editState === 'executionDate' ? (
         <input
+          data-testid="edit-execution-date"
           type="date"
           value={tmpValue}
           onChange={(e) => setTmpValue(e.target.value)}
@@ -94,10 +96,13 @@ export const TodoRow = ({ todo }: Props) => {
       ) : (
         <>
           {todo.content}-{todo.executionDate}
-          <button onClick={startEditContent}>
+          <button data-testid="start-edit-content" onClick={startEditContent}>
             <PencilSquare className="size-4" />
           </button>
-          <button onClick={startEditExecutionDate}>
+          <button
+            data-testid="start-edit-execution-date"
+            onClick={startEditExecutionDate}
+          >
             <Calendar className="size-4" />
           </button>
           <button onClick={remove}>
