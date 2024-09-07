@@ -1,37 +1,45 @@
-import type { Schema } from '@/amplify/data/resource'
-import { TodoRow } from '@/src/components/TodoRow'
+import { TodoRow } from '@/src/components/TodoList/TodoRow'
+import { useTodo } from '@/src/components/TodoList/useTodo'
 import '@testing-library/jest-dom'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 
-jest.mock('aws-amplify/api', () => ({
-  generateClient: jest.fn().mockImplementation(() => ({
-    models: {
-      Todo: {
-        update: jest.fn().mockReturnValue({
-          errors: undefined,
-        }),
-      },
-    },
+type RecursivePartial<T> = {
+  [P in keyof T]?: T[P] extends (infer U)[]
+    ? RecursivePartial<U>[]
+    : T[P] extends object
+      ? RecursivePartial<T[P]>
+      : T[P]
+}
+
+jest.mock('@/src/components/TodoList/useTodo', () => ({
+  useTodo: jest.fn(() => ({
+    update: jest.fn(),
+    remove: jest.fn(),
   })),
 }))
 
+const mockUseTodo = jest.mocked(useTodo)
+
 describe('TodoRow', () => {
-  const createMockTodo = (
-    mockValue: Partial<Schema['Todo']['type']> = {},
-  ): Schema['Todo']['type'] => ({
-    content: 'content',
-    executionDate: '2024-01-01',
-    isDone: false,
-    id: '1',
-    createdAt: new Date(1704034800000).toDateString(),
-    updatedAt: new Date(1704034800000).toDateString(),
-    ...mockValue,
+  const createProps = (
+    props: RecursivePartial<React.ComponentProps<typeof TodoRow>> = {},
+  ): React.ComponentProps<typeof TodoRow> => ({
+    ...props,
+    todo: {
+      content: 'content',
+      executionDate: '2024-01-01',
+      isDone: false,
+      id: '1',
+      createdAt: new Date(1704034800000).toDateString(),
+      updatedAt: new Date(1704034800000).toDateString(),
+      ...props.todo,
+    },
   })
 
   describe('チェックボックスの動作', () => {
     it('チェックなし', () => {
       act(() => {
-        render(<TodoRow todo={createMockTodo()} />)
+        render(<TodoRow {...createProps()} />)
       })
 
       expect(screen.queryByTestId('check-icon')).toBeNull()
@@ -39,17 +47,46 @@ describe('TodoRow', () => {
 
     it('チェックあり', () => {
       act(() => {
-        render(<TodoRow todo={createMockTodo({ isDone: true })} />)
+        render(<TodoRow {...createProps({ todo: { isDone: true } })} />)
       })
 
       expect(screen.getByTestId('check-icon')).toBeInTheDocument()
     })
+
+    it('updateが発火すること', () => {
+      const update = jest.fn()
+      mockUseTodo.mockImplementation(() => ({
+        update,
+        remove: jest.fn(),
+      }))
+
+      act(() => {
+        render(<TodoRow {...createProps()} />)
+      })
+
+      act(() => {
+        fireEvent.click(screen.getByTestId('is-done'))
+      })
+
+      expect(update).toHaveBeenCalledWith({
+        id: '1',
+        isDone: true,
+      })
+    })
   })
 
   describe('contentの編集', () => {
+    let update: jest.Mock
+
     beforeEach(() => {
+      update = jest.fn()
+      mockUseTodo.mockImplementation(() => ({
+        update,
+        remove: jest.fn(),
+      }))
+
       act(() => {
-        render(<TodoRow todo={createMockTodo()} />)
+        render(<TodoRow {...createProps()} />)
       })
 
       act(() => {
@@ -74,6 +111,17 @@ describe('TodoRow', () => {
       expect(screen.getByTestId('edit-content')).toHaveValue('change')
     })
 
+    it('blur時にmodelsのupdateが走ること', async () => {
+      await act(async () => {
+        fireEvent.blur(screen.getByTestId('edit-content'))
+      })
+
+      expect(update).toHaveBeenCalledWith({
+        id: '1',
+        content: 'content',
+      })
+    })
+
     it('blur時にinputが消えていること', async () => {
       await act(async () => {
         fireEvent.blur(screen.getByTestId('edit-content'))
@@ -84,9 +132,17 @@ describe('TodoRow', () => {
   })
 
   describe('日付の編集', () => {
+    let update: jest.Mock
+
     beforeEach(() => {
+      update = jest.fn()
+      mockUseTodo.mockImplementation(() => ({
+        update,
+        remove: jest.fn(),
+      }))
+
       act(() => {
-        render(<TodoRow todo={createMockTodo()} />)
+        render(<TodoRow {...createProps()} />)
       })
 
       act(() => {
@@ -115,6 +171,17 @@ describe('TodoRow', () => {
       )
     })
 
+    it('blur時にmodelsのupdateが走ること', async () => {
+      await act(async () => {
+        fireEvent.blur(screen.getByTestId('edit-execution-date'))
+      })
+
+      expect(update).toHaveBeenCalledWith({
+        id: '1',
+        executionDate: '2024-01-01',
+      })
+    })
+
     it('blur時にinputが消えていること', async () => {
       await act(async () => {
         fireEvent.blur(screen.getByTestId('edit-execution-date'))
@@ -122,5 +189,23 @@ describe('TodoRow', () => {
 
       expect(screen.queryByTestId('edit-execution-date')).toBeNull()
     })
+  })
+
+  it('削除時にremoveが呼ばれること', () => {
+    const remove = jest.fn()
+    mockUseTodo.mockImplementation(() => ({
+      update: jest.fn(),
+      remove,
+    }))
+
+    act(() => {
+      render(<TodoRow {...createProps()} />)
+    })
+
+    act(() => {
+      fireEvent.click(screen.getByTestId('remove'))
+    })
+
+    expect(remove).toHaveBeenCalledWith('1')
   })
 })
