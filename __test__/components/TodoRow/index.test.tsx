@@ -11,12 +11,7 @@ type RecursivePartial<T> = {
       : T[P]
 }
 
-jest.mock('@/src/components/TodoList/useTodo', () => ({
-  useTodo: jest.fn(() => ({
-    update: jest.fn(),
-    remove: jest.fn(),
-  })),
-}))
+jest.mock('@/src/components/TodoList/useTodo')
 
 const mockUseTodo = jest.mocked(useTodo)
 
