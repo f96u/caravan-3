@@ -27,3 +27,15 @@ jobs:
       - run: npx next telemetry disable
       - run: echo "{}" > amplify_outputs.json
       - run: npm run build
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.15.1'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - run: npx next telemetry disable
+      - run: npm run test
