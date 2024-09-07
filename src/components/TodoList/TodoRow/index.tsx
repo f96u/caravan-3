@@ -3,30 +3,25 @@ import { Calendar } from '@/src/svgs/Calendar'
 import { CheckIcon } from '@/src/svgs/CheckIcon'
 import { PencilSquare } from '@/src/svgs/PencilSquare'
 import { Trash } from '@/src/svgs/Trash'
-import { generateClient } from 'aws-amplify/api'
 import { useState } from 'react'
+import { useTodo } from '../useTodo'
 import { formatDate } from './formatDate'
-
-const client = generateClient<Schema>()
 
 type Props = {
   todo: Schema['Todo']['type']
 }
 export const TodoRow = ({ todo }: Props) => {
+  const { update, remove: removeTodo } = useTodo()
   const [editState, setEditState] = useState<
     null | 'content' | 'executionDate'
   >(null)
   const [tmpValue, setTmpValue] = useState('')
 
   const toggleDone = async () => {
-    const { errors } = await client.models.Todo.update({
+    update({
       id: todo.id,
       isDone: !todo.isDone,
     })
-
-    if (errors) {
-      console.error(errors)
-    }
   }
 
   const startEditContent = () => {
@@ -40,42 +35,32 @@ export const TodoRow = ({ todo }: Props) => {
   }
 
   const editContent = async () => {
-    const { errors } = await client.models.Todo.update({
+    update({
       id: todo.id,
       content: tmpValue,
     })
     setEditState(null)
-
-    if (errors) {
-      console.error(errors)
-    }
   }
 
   const editExecutionDate = async () => {
-    const { errors } = await client.models.Todo.update({
+    update({
       id: todo.id,
       executionDate: tmpValue,
     })
     setEditState(null)
-
-    if (errors) {
-      console.error(errors)
-    }
   }
 
   const remove = async () => {
-    const { errors } = await client.models.Todo.delete({
-      id: todo.id,
-    })
-
-    if (errors) {
-      console.error(errors)
-    }
+    removeTodo(todo.id)
   }
 
   return (
     <>
-      <button className="size-4 border" onClick={toggleDone}>
+      <button
+        data-testid="is-done"
+        className="size-4 border"
+        onClick={toggleDone}
+      >
         {todo.isDone && <CheckIcon />}
       </button>
       {editState === 'content' ? (
@@ -105,7 +90,7 @@ export const TodoRow = ({ todo }: Props) => {
           >
             <Calendar className="size-4" />
           </button>
-          <button onClick={remove}>
+          <button data-testid="remove" onClick={remove}>
             <Trash className="size-4" />
           </button>
         </>
