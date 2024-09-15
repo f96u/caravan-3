@@ -1,25 +1,17 @@
 'use client'
 import type { Schema } from '@/amplify/data/resource'
 import { generateClient } from 'aws-amplify/api'
-import { useEffect, useState } from 'react'
 import { TodoRow } from './TodoRow'
+import { useTodo } from './useTodo'
 
 const client = generateClient<Schema>()
 
 export const TodoList = () => {
-  const [todos, setTodos] = useState<Array<Schema['Todo']['type']>>([])
-
-  useEffect(() => {
-    const sub = client.models.Todo.observeQuery().subscribe({
-      next: ({ items }) => setTodos([...items]),
-    })
-    return () => sub.unsubscribe()
-  }, [])
+  const { todos } = useTodo()
 
   const createTodo = async () => {
     const { errors } = await client.models.Todo.create({
       content: window.prompt('Todo content'),
-      isDone: false,
     })
 
     if (errors) {

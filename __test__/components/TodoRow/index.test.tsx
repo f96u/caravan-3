@@ -3,6 +3,16 @@ import { useTodo } from '@/src/components/TodoList/useTodo'
 import '@testing-library/jest-dom'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 
+const mockTodo = (props: Partial<React.ComponentProps<typeof TodoRow>['todo']> = {}) => ({
+  content: 'content',
+  executionDate: '2024-01-01',
+  isDone: false,
+  id: '1',
+  createdAt: new Date(1704034800000).toDateString(),
+  updatedAt: new Date(1704034800000).toDateString(),
+  ...props,
+})
+
 type RecursivePartial<T> = {
   [P in keyof T]?: T[P] extends (infer U)[]
     ? RecursivePartial<U>[]
@@ -20,15 +30,7 @@ describe('TodoRow', () => {
     props: RecursivePartial<React.ComponentProps<typeof TodoRow>> = {},
   ): React.ComponentProps<typeof TodoRow> => ({
     ...props,
-    todo: {
-      content: 'content',
-      executionDate: '2024-01-01',
-      isDone: false,
-      id: '1',
-      createdAt: new Date(1704034800000).toDateString(),
-      updatedAt: new Date(1704034800000).toDateString(),
-      ...props.todo,
-    },
+    todo: mockTodo(props.todo),
   })
 
   describe('チェックボックスの動作', () => {
@@ -51,6 +53,7 @@ describe('TodoRow', () => {
     it('updateが発火すること', () => {
       const update = jest.fn()
       mockUseTodo.mockImplementation(() => ({
+        todos: [mockTodo()],
         update,
         remove: jest.fn(),
       }))
@@ -76,6 +79,7 @@ describe('TodoRow', () => {
     beforeEach(() => {
       update = jest.fn()
       mockUseTodo.mockImplementation(() => ({
+        todos: [mockTodo()],
         update,
         remove: jest.fn(),
       }))
@@ -132,6 +136,7 @@ describe('TodoRow', () => {
     beforeEach(() => {
       update = jest.fn()
       mockUseTodo.mockImplementation(() => ({
+        todos: [mockTodo()],
         update,
         remove: jest.fn(),
       }))
@@ -189,6 +194,7 @@ describe('TodoRow', () => {
   it('削除時にremoveが呼ばれること', () => {
     const remove = jest.fn()
     mockUseTodo.mockImplementation(() => ({
+      todos: [mockTodo()],
       update: jest.fn(),
       remove,
     }))
