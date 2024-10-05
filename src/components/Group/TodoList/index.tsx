@@ -24,10 +24,15 @@ export const TodoList = ({ group }: Props) => {
       setTodos((await group.members()).data)
     })()
 
-    if (Array.isArray(group.order)) {
-      setOrderList(group.order.map(o => `${o}`))
-    }
-  }, [group])
+    // NOTE: Todoを作成した直後の場合、Groupモデルのorderにid登録がないため新規作成順でリスト末尾に加える
+    const unsortedTodos =
+      todos
+        .filter(t => !group.order.includes(t.id))
+        .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+        .map(t => t.id)
+    const groupOrder = group.order.map(o => `${o}`)
+    setOrderList([...groupOrder, ...unsortedTodos])
+  }, [group, todos])
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
@@ -58,11 +63,6 @@ export const TodoList = ({ group }: Props) => {
             </div>
           )
         })}
-        {todos.filter(todo => !orderList.includes(todo.id)).map(todo => (
-          <div key={todo.id} className="flex items-center gap-2">
-              <TodoRow todo={todo} />
-            </div>
-        ))}
         </SortableContext>
     </DndContext>
   )
