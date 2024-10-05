@@ -1,9 +1,9 @@
 'use client'
 
-import { TodoList } from './TodoList'
-import { useGroup } from './useGroup'
 import type { Schema } from '@/amplify/data/resource'
 import { generateClient } from 'aws-amplify/api'
+import { TodoList } from './TodoList'
+import { useGroup } from './useGroup'
 
 const client = generateClient<Schema>()
 

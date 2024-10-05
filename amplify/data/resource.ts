@@ -16,7 +16,7 @@ const schema = a.schema({
       order: a.string().array().required(),
       members: a.hasMany('Todo', 'groupId'),
     })
-    .authorization(allow => [allow.owner()])
+    .authorization((allow) => [allow.owner()]),
 })
 
 export type Schema = ClientSchema<typeof schema>

@@ -3,23 +3,18 @@ import { Calendar } from '@/src/svgs/Calendar'
 import { CheckIcon } from '@/src/svgs/CheckIcon'
 import { PencilSquare } from '@/src/svgs/PencilSquare'
 import { Trash } from '@/src/svgs/Trash'
-import { useState } from 'react'
-import { useTodo } from './useTodo'
-import { formatDate } from './formatDate'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { useState } from 'react'
+import { formatDate } from './formatDate'
+import { useTodo } from './useTodo'
 
 type Props = {
   todo: Schema['Todo']['type']
 }
 export const TodoRow = ({ todo }: Props) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id: todo.id })
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: todo.id })
   const { update, remove: removeTodo } = useTodo()
   const [editState, setEditState] = useState<
     null | 'content' | 'executionDate'
@@ -64,7 +59,12 @@ export const TodoRow = ({ todo }: Props) => {
   }
 
   return (
-    <div ref={setNodeRef} style={{ transform: CSS.Transform.toString(transform), transition }} {...attributes} {...listeners}>
+    <div
+      ref={setNodeRef}
+      style={{ transform: CSS.Transform.toString(transform), transition }}
+      {...attributes}
+      {...listeners}
+    >
       <button
         data-testid="is-done"
         className="size-4 border"

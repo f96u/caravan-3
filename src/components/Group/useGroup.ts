@@ -1,6 +1,6 @@
-import { generateClient } from 'aws-amplify/api'
 import type { Schema } from '@/amplify/data/resource'
-import { useState, useEffect } from "react"
+import { generateClient } from 'aws-amplify/api'
+import { useEffect, useState } from 'react'
 
 const client = generateClient<Schema>()
 export const useGroup = () => {

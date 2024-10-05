@@ -3,7 +3,9 @@ import { useTodo } from '@/src/components/TodoList/useTodo'
 import '@testing-library/jest-dom'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 
-const mockTodo = (props: Partial<React.ComponentProps<typeof TodoRow>['todo']> = {}) => ({
+const mockTodo = (
+  props: Partial<React.ComponentProps<typeof TodoRow>['todo']> = {},
+) => ({
   content: 'content',
   executionDate: '2024-01-01',
   isDone: false,
