@@ -1,22 +1,23 @@
+import type { Schema } from '@/amplify/data/resource'
 import { TodoRow } from '@/src/components/Group/TodoList/TodoRow'
 import { useTodo } from '@/src/components/Group/TodoList/TodoRow/useTodo'
 import '@testing-library/jest-dom'
 import { act, fireEvent, render, screen } from '@testing-library/react'
-import type { Schema } from '@/amplify/data/resource'
 
 const mockTodo = (
   props: RecursivePartial<React.ComponentProps<typeof TodoRow>['todo']> = {},
-) => ({
-  id: '1',
-  content: 'content',
-  executionDate: '2024-01-01',
-  isDone: false,
-  groupId: '1',
-  group: {} as unknown,
-  createdAt: new Date(1704034800000).toDateString(),
-  updatedAt: new Date(1704034800000).toDateString(),
-  ...props,
-} as Schema['Todo']['type'])
+) =>
+  ({
+    id: '1',
+    content: 'content',
+    executionDate: '2024-01-01',
+    isDone: false,
+    groupId: '1',
+    group: {} as unknown,
+    createdAt: new Date(1704034800000).toDateString(),
+    updatedAt: new Date(1704034800000).toDateString(),
+    ...props,
+  }) as Schema['Todo']['type']
 
 type RecursivePartial<T> = {
   [P in keyof T]?: T[P] extends (infer U)[]
@@ -30,7 +31,7 @@ jest.mock('@/src/components/Group/TodoList/TodoRow/useTodo', () => ({
   useTodo: jest.fn(() => ({
     update: jest.fn(),
     remove: jest.fn(),
-  }))
+  })),
 }))
 
 const mockUseTodo = jest.mocked(useTodo)

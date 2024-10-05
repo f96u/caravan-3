@@ -16,7 +16,7 @@ import {
 } from '@dnd-kit/sortable'
 import { generateClient } from 'aws-amplify/api'
 import { useEffect, useState } from 'react'
-import { TodoRow } from '../TodoRow'
+import { TodoRow } from './TodoRow'
 
 const client = generateClient<Schema>()
 
