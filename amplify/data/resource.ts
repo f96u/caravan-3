@@ -5,7 +5,16 @@ const schema = a.schema({
     .model({
       content: a.string(),
       executionDate: a.date(),
-      isDone: a.boolean(),
+      isDone: a.boolean().default(false),
+      groupId: a.id(),
+      group: a.belongsTo('Group', 'groupId'),
+    })
+    .authorization((allow) => [allow.owner()]),
+  Group: a
+    .model({
+      name: a.string(),
+      order: a.string().array().required(),
+      members: a.hasMany('Todo', 'groupId'),
     })
     .authorization((allow) => [allow.owner()]),
 })

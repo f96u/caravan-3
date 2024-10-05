@@ -1,7 +1,23 @@
-import { TodoRow } from '@/src/components/TodoList/TodoRow'
-import { useTodo } from '@/src/components/TodoList/useTodo'
+import type { Schema } from '@/amplify/data/resource'
+import { TodoRow } from '@/src/components/Group/TodoList/TodoRow'
+import { useTodo } from '@/src/components/Group/TodoList/TodoRow/useTodo'
 import '@testing-library/jest-dom'
 import { act, fireEvent, render, screen } from '@testing-library/react'
+
+const mockTodo = (
+  props: RecursivePartial<React.ComponentProps<typeof TodoRow>['todo']> = {},
+) =>
+  ({
+    id: '1',
+    content: 'content',
+    executionDate: '2024-01-01',
+    isDone: false,
+    groupId: '1',
+    group: {} as unknown,
+    createdAt: new Date(1704034800000).toDateString(),
+    updatedAt: new Date(1704034800000).toDateString(),
+    ...props,
+  }) as Schema['Todo']['type']
 
 type RecursivePartial<T> = {
   [P in keyof T]?: T[P] extends (infer U)[]
@@ -11,7 +27,12 @@ type RecursivePartial<T> = {
       : T[P]
 }
 
-jest.mock('@/src/components/TodoList/useTodo')
+jest.mock('@/src/components/Group/TodoList/TodoRow/useTodo', () => ({
+  useTodo: jest.fn(() => ({
+    update: jest.fn(),
+    remove: jest.fn(),
+  })),
+}))
 
 const mockUseTodo = jest.mocked(useTodo)
 
@@ -20,15 +41,7 @@ describe('TodoRow', () => {
     props: RecursivePartial<React.ComponentProps<typeof TodoRow>> = {},
   ): React.ComponentProps<typeof TodoRow> => ({
     ...props,
-    todo: {
-      content: 'content',
-      executionDate: '2024-01-01',
-      isDone: false,
-      id: '1',
-      createdAt: new Date(1704034800000).toDateString(),
-      updatedAt: new Date(1704034800000).toDateString(),
-      ...props.todo,
-    },
+    todo: mockTodo(props.todo),
   })
 
   describe('チェックボックスの動作', () => {
