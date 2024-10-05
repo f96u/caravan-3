@@ -1,19 +1,22 @@
-import { TodoRow } from '@/src/components/TodoList/TodoRow'
-import { useTodo } from '@/src/components/TodoList/useTodo'
+import { TodoRow } from '@/src/components/Group/TodoList/TodoRow'
+import { useTodo } from '@/src/components/Group/TodoList/TodoRow/useTodo'
 import '@testing-library/jest-dom'
 import { act, fireEvent, render, screen } from '@testing-library/react'
+import type { Schema } from '@/amplify/data/resource'
 
 const mockTodo = (
-  props: Partial<React.ComponentProps<typeof TodoRow>['todo']> = {},
+  props: RecursivePartial<React.ComponentProps<typeof TodoRow>['todo']> = {},
 ) => ({
+  id: '1',
   content: 'content',
   executionDate: '2024-01-01',
   isDone: false,
-  id: '1',
+  groupId: '1',
+  group: {} as unknown,
   createdAt: new Date(1704034800000).toDateString(),
   updatedAt: new Date(1704034800000).toDateString(),
   ...props,
-})
+} as Schema['Todo']['type'])
 
 type RecursivePartial<T> = {
   [P in keyof T]?: T[P] extends (infer U)[]
@@ -23,7 +26,12 @@ type RecursivePartial<T> = {
       : T[P]
 }
 
-jest.mock('@/src/components/TodoList/useTodo')
+jest.mock('@/src/components/Group/TodoList/TodoRow/useTodo', () => ({
+  useTodo: jest.fn(() => ({
+    update: jest.fn(),
+    remove: jest.fn(),
+  }))
+}))
 
 const mockUseTodo = jest.mocked(useTodo)
 
@@ -55,7 +63,6 @@ describe('TodoRow', () => {
     it('updateが発火すること', () => {
       const update = jest.fn()
       mockUseTodo.mockImplementation(() => ({
-        todos: [mockTodo()],
         update,
         remove: jest.fn(),
       }))
@@ -81,7 +88,6 @@ describe('TodoRow', () => {
     beforeEach(() => {
       update = jest.fn()
       mockUseTodo.mockImplementation(() => ({
-        todos: [mockTodo()],
         update,
         remove: jest.fn(),
       }))
@@ -138,7 +144,6 @@ describe('TodoRow', () => {
     beforeEach(() => {
       update = jest.fn()
       mockUseTodo.mockImplementation(() => ({
-        todos: [mockTodo()],
         update,
         remove: jest.fn(),
       }))
@@ -196,7 +201,6 @@ describe('TodoRow', () => {
   it('削除時にremoveが呼ばれること', () => {
     const remove = jest.fn()
     mockUseTodo.mockImplementation(() => ({
-      todos: [mockTodo()],
       update: jest.fn(),
       remove,
     }))

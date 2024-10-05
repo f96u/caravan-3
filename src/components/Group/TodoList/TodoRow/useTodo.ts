@@ -1,22 +1,9 @@
 import type { Schema } from '@/amplify/data/resource'
 import { generateClient } from 'aws-amplify/api'
-import { useEffect, useState } from 'react'
 
 const client = generateClient<Schema>()
 
 export const useTodo = () => {
-  const [todos, setTodos] = useState<Array<Schema['Todo']['type']>>([])
-
-  useEffect(() => {
-    const sub = client.models.Todo.observeQuery().subscribe({
-      next: ({ items }) => {
-        // TODO: prevItemsに沿ってソートすること
-        setTodos([...items])
-      },
-    })
-    return () => sub.unsubscribe()
-  }, [])
-
   const update = async (
     models: Pick<
       Schema['Todo']['type'],
@@ -43,5 +30,5 @@ export const useTodo = () => {
       console.error(errors)
     }
   }
-  return { todos, update, remove }
+  return { update, remove }
 }
