@@ -4,7 +4,8 @@ import { Authenticator } from '@aws-amplify/ui-react'
 import '@aws-amplify/ui-react/styles.css'
 import { Amplify } from 'aws-amplify'
 import { Clock } from '../components/Clock'
-import { TodoList } from '../components/TodoList'
+import { Dnd } from '../components/Dnd'
+import { Group } from '../components/Group'
 
 Amplify.configure(outputs)
 
@@ -16,7 +17,8 @@ export default function Home() {
           <Clock />
           <h1>{user?.signInDetails?.loginId}&aposs todos</h1>
           <button onClick={signOut}>Sign out</button>
-          <TodoList />
+          <Group />
+          <Dnd />
         </main>
       )}
     </Authenticator>

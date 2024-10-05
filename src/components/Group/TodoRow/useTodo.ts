@@ -9,7 +9,10 @@ export const useTodo = () => {
 
   useEffect(() => {
     const sub = client.models.Todo.observeQuery().subscribe({
-      next: ({ items }) => setTodos([...items]),
+      next: ({ items }) => {
+        // TODO: prevItemsに沿ってソートすること
+        setTodos([...items])
+      },
     })
     return () => sub.unsubscribe()
   }, [])
