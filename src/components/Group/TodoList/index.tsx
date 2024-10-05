@@ -4,6 +4,9 @@ import { TodoRow } from '../TodoRow'
 import type { DragEndEvent, UniqueIdentifier} from '@dnd-kit/core';
 import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { arrayMove, sortableKeyboardCoordinates, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { generateClient } from 'aws-amplify/api'
+
+const client = generateClient<Schema>()
 
 type Props = {
   group: Schema['Group']['type']
@@ -23,7 +26,9 @@ export const TodoList = ({ group }: Props) => {
     (async () => {
       setTodos((await group.members()).data)
     })()
+  }, [group])
 
+  useEffect(() => {
     // NOTE: Todoを作成した直後の場合、Groupモデルのorderにid登録がないため新規作成順でリスト末尾に加える
     const unsortedTodos =
       todos
@@ -32,15 +37,16 @@ export const TodoList = ({ group }: Props) => {
         .map(t => t.id)
     const groupOrder = group.order.map(o => `${o}`)
     setOrderList([...groupOrder, ...unsortedTodos])
-  }, [group, todos])
+  }, [group.order, todos])
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event
     if (over !== null && active.id !== over.id) {
-      setOrderList(items => {
-        const oldIndex = items.indexOf(active.id)
-        const newIndex = items.indexOf(over.id)
-        return arrayMove(items, oldIndex, newIndex)
+      const nextOrderList = arrayMove(orderList, orderList.indexOf(active.id), orderList.indexOf(over.id))
+      setOrderList(nextOrderList)
+      await client.models.Group.update({
+        id: group.id,
+        order: nextOrderList.map(o => `${o}`),
       })
     }
   }
