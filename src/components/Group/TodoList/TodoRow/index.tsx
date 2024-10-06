@@ -8,12 +8,13 @@ import { CSS } from '@dnd-kit/utilities'
 import { useState } from 'react'
 import { formatDate } from './formatDate'
 import { useTodo } from './useTodo'
+import { DragVertical } from '@/src/svgs/DragVertical'
 
 type Props = {
   todo: Schema['Todo']['type']
 }
 export const TodoRow = ({ todo }: Props) => {
-  const { attributes, listeners, setNodeRef, transform, transition } =
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition } =
     useSortable({ id: todo.id })
   const { update, remove: removeTodo } = useTodo()
   const [editState, setEditState] = useState<
@@ -62,9 +63,9 @@ export const TodoRow = ({ todo }: Props) => {
     <div
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      {...attributes}
-      {...listeners}
+      className="flex items-center gap-2 border bg-white px-3 py-1"
     >
+      <div ref={setActivatorNodeRef} {...attributes} {...listeners}><DragVertical className='size-3' /></div>
       <button
         data-testid="is-done"
         className="size-4 border"
@@ -88,21 +89,23 @@ export const TodoRow = ({ todo }: Props) => {
           onBlur={editExecutionDate}
         />
       ) : (
-        <>
+        <div className="flex flex-grow justify-between">
           {todo.content}-{todo.executionDate}
-          <button data-testid="start-edit-content" onClick={startEditContent}>
-            <PencilSquare className="size-4" />
-          </button>
-          <button
-            data-testid="start-edit-execution-date"
-            onClick={startEditExecutionDate}
-          >
-            <Calendar className="size-4" />
-          </button>
-          <button data-testid="remove" onClick={remove}>
-            <Trash className="size-4" />
-          </button>
-        </>
+          <div className="flex gap-1">
+            <button data-testid="start-edit-content" onClick={startEditContent}>
+              <PencilSquare className="size-4" />
+            </button>
+            <button
+              data-testid="start-edit-execution-date"
+              onClick={startEditExecutionDate}
+            >
+              <Calendar className="size-4" />
+            </button>
+            <button data-testid="remove" onClick={remove}>
+              <Trash className="size-4" />
+            </button>
+          </div>
+        </div>
       )}
     </div>
   )

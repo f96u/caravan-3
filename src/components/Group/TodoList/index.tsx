@@ -80,9 +80,7 @@ export const TodoList = ({ group }: Props) => {
           const todo = todos.find((todo) => todo.id === id)
           return (
             todo && (
-              <div key={todo.id} className="flex items-center gap-2">
-                <TodoRow todo={todo} />
-              </div>
+              <TodoRow key={todo.id} todo={todo} />
             )
           )
         })}
