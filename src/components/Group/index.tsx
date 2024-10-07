@@ -1,17 +1,15 @@
 'use client'
 
 import type { Schema } from '@/amplify/data/resource'
-import { generateClient } from 'aws-amplify/api'
 import { TodoList } from './TodoList'
 import { useGroup } from './useGroup'
-
-const client = generateClient<Schema>()
+import { amplifyClient } from '@/src/lib/amplifyClient'
 
 export const Group = () => {
   const { groups, createGroup } = useGroup()
 
   const createTodo = async (group: Schema['Group']['type']) => {
-    await client.models.Todo.create({
+    await amplifyClient.create('Todo', {
       groupId: group.id,
       content: window.prompt('Todo content'),
     })
@@ -26,7 +24,7 @@ export const Group = () => {
           <button onClick={() => createTodo(group)}>+ new Todo</button>
         </div>
       ))}
-      <button onClick={createGroup}>+ new Group</button>
+      <button data-testid="create-group" onClick={createGroup}>+ new Group</button>
     </>
   )
 }

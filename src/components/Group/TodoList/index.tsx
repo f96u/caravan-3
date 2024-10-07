@@ -14,11 +14,9 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
-import { generateClient } from 'aws-amplify/api'
 import { useEffect, useState } from 'react'
 import { TodoRow } from './TodoRow'
-
-const client = generateClient<Schema>()
+import { amplifyClient } from '@/src/lib/amplifyClient'
 
 type Props = {
   group: Schema['Group']['type']
@@ -62,7 +60,7 @@ export const TodoList = ({ group }: Props) => {
         orderList.indexOf(over.id),
       )
       setOrderList(nextOrderList)
-      await client.models.Group.update({
+      await amplifyClient.update('Group', {
         id: group.id,
         order: nextOrderList.map((o) => `${o}`),
       })
