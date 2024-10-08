@@ -1,6 +1,6 @@
 import type { Schema } from '@/amplify/data/resource'
-import { useEffect, useState } from 'react'
 import { amplifyClient } from '@/src/lib/amplifyClient'
+import { useEffect, useState } from 'react'
 
 export const useGroup = () => {
   const [groups, setGroups] = useState<Array<Schema['Group']['type']>>([])

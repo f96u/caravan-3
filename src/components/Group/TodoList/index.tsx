@@ -1,4 +1,5 @@
 import type { Schema } from '@/amplify/data/resource'
+import { amplifyClient } from '@/src/lib/amplifyClient'
 import type { DragEndEvent, UniqueIdentifier } from '@dnd-kit/core'
 import {
   closestCenter,
@@ -16,7 +17,6 @@ import {
 } from '@dnd-kit/sortable'
 import { useEffect, useState } from 'react'
 import { TodoRow } from './TodoRow'
-import { amplifyClient } from '@/src/lib/amplifyClient'
 
 type Props = {
   group: Schema['Group']['type']
@@ -76,11 +76,7 @@ export const TodoList = ({ group }: Props) => {
       <SortableContext items={orderList} strategy={verticalListSortingStrategy}>
         {orderList.map((id) => {
           const todo = todos.find((todo) => todo.id === id)
-          return (
-            todo && (
-              <TodoRow key={todo.id} todo={todo} />
-            )
-          )
+          return todo && <TodoRow key={todo.id} todo={todo} />
         })}
       </SortableContext>
     </DndContext>

@@ -8,8 +8,8 @@ export const DragVertical = ({ className }: { className: string }) => (
     className={className}
   >
     <path
-        stroke="currentColor"
-        d="M9.5 3a.5.5 0 110-1 .5.5 0 010 1zM9.5 8a.5.5 0 110-1 .5.5 0 010 1zM9.5 13a.5.5 0 110-1 .5.5 0 010 1zM5.5 3a.5.5 0 110-1 .5.5 0 010 1zM5.5 8a.5.5 0 110-1 .5.5 0 010 1zM5.5 13a.5.5 0 110-1 .5.5 0 010 1z"
-      />
+      stroke="currentColor"
+      d="M9.5 3a.5.5 0 110-1 .5.5 0 010 1zM9.5 8a.5.5 0 110-1 .5.5 0 010 1zM9.5 13a.5.5 0 110-1 .5.5 0 010 1zM5.5 3a.5.5 0 110-1 .5.5 0 010 1zM5.5 8a.5.5 0 110-1 .5.5 0 010 1zM5.5 13a.5.5 0 110-1 .5.5 0 010 1z"
+    />
   </svg>
 )

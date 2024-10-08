@@ -1,9 +1,9 @@
 'use client'
 
 import type { Schema } from '@/amplify/data/resource'
+import { amplifyClient } from '@/src/lib/amplifyClient'
 import { TodoList } from './TodoList'
 import { useGroup } from './useGroup'
-import { amplifyClient } from '@/src/lib/amplifyClient'
 
 export const Group = () => {
   const { groups, createGroup } = useGroup()
@@ -24,7 +24,9 @@ export const Group = () => {
           <button onClick={() => createTodo(group)}>+ new Todo</button>
         </div>
       ))}
-      <button data-testid="create-group" onClick={createGroup}>+ new Group</button>
+      <button data-testid="create-group" onClick={createGroup}>
+        + new Group
+      </button>
     </>
   )
 }

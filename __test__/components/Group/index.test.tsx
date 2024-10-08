@@ -1,12 +1,12 @@
-import { Group } from "@/src/components/Group"
-import { useGroup } from "@/src/components/Group/useGroup"
+import { Group } from '@/src/components/Group'
+import { useGroup } from '@/src/components/Group/useGroup'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 
 jest.mock('@/src/components/Group/useGroup', () => ({
   useGroup: jest.fn(() => ({
     groups: [],
-    createGroup: jest.fn()
-  }))
+    createGroup: jest.fn(),
+  })),
 }))
 
 const mockUseGroup = jest.mocked(useGroup)

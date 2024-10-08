@@ -53,12 +53,14 @@ describe('TodoRow', () => {
     })
 
     it('チェックボックスを押した時の動作', async () => {
-      const spyUpdate = jest.spyOn(amplifyClient, 'update').mockResolvedValue({ data: mockTodo({ isDone: true }) })
-      
+      const spyUpdate = jest
+        .spyOn(amplifyClient, 'update')
+        .mockResolvedValue({ data: mockTodo({ isDone: true }) })
+
       act(() => {
         render(<TodoRow {...createProps()} />)
       })
-      
+
       expect(screen.queryByTestId('check-icon')).toBeNull()
 
       await act(async () => {
@@ -102,7 +104,9 @@ describe('TodoRow', () => {
       let spyUpdate: jest.SpyInstance
 
       beforeEach(async () => {
-        spyUpdate = jest.spyOn(amplifyClient, 'update').mockResolvedValue({ data: mockTodo({ content: 'change' }) })
+        spyUpdate = jest
+          .spyOn(amplifyClient, 'update')
+          .mockResolvedValue({ data: mockTodo({ content: 'change' }) })
         await act(async () => {
           fireEvent.blur(screen.getByTestId('edit-content'))
         })
@@ -158,7 +162,11 @@ describe('TodoRow', () => {
       let spyUpdate: jest.SpyInstance
 
       beforeEach(async () => {
-        spyUpdate = jest.spyOn(amplifyClient, 'update').mockResolvedValue({ data: mockTodo({ executionDate: '2024-12-31' }) })
+        spyUpdate = jest
+          .spyOn(amplifyClient, 'update')
+          .mockResolvedValue({
+            data: mockTodo({ executionDate: '2024-12-31' }),
+          })
         await act(async () => {
           fireEvent.blur(screen.getByTestId('edit-execution-date'))
         })
@@ -182,7 +190,9 @@ describe('TodoRow', () => {
     let spyRemove: jest.SpyInstance
 
     beforeEach(async () => {
-      spyRemove = jest.spyOn(amplifyClient, 'remove').mockResolvedValue({ data: mockTodo() })
+      spyRemove = jest
+        .spyOn(amplifyClient, 'remove')
+        .mockResolvedValue({ data: mockTodo() })
 
       act(() => {
         render(<TodoRow {...createProps()} />)

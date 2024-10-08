@@ -1,14 +1,14 @@
 import type { Schema } from '@/amplify/data/resource'
+import { amplifyClient } from '@/src/lib/amplifyClient'
 import { Calendar } from '@/src/svgs/Calendar'
 import { CheckIcon } from '@/src/svgs/CheckIcon'
+import { DragVertical } from '@/src/svgs/DragVertical'
 import { PencilSquare } from '@/src/svgs/PencilSquare'
 import { Trash } from '@/src/svgs/Trash'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useState } from 'react'
 import { formatDate } from './formatDate'
-import { DragVertical } from '@/src/svgs/DragVertical'
-import { amplifyClient } from '@/src/lib/amplifyClient'
 
 type Props = {
   todo: Schema['Todo']['type']
@@ -16,8 +16,14 @@ type Props = {
 
 export const TodoRow = ({ todo: initTodo }: Props) => {
   const [todo, setTodo] = useState<Schema['Todo']['type'] | null>(initTodo)
-  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition } =
-    useSortable({ id: initTodo.id })
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id: initTodo.id })
   const [editState, setEditState] = useState<
     null | 'content' | 'executionDate'
   >(null)
@@ -37,7 +43,7 @@ export const TodoRow = ({ todo: initTodo }: Props) => {
       content: models.content,
       isDone: models.isDone,
       executionDate: models.executionDate,
-    }) 
+    })
 
     if (!errors) {
       setTodo(data)
@@ -81,7 +87,9 @@ export const TodoRow = ({ todo: initTodo }: Props) => {
       style={{ transform: CSS.Transform.toString(transform), transition }}
       className="flex items-center gap-2 border bg-white px-3 py-1"
     >
-      <div ref={setActivatorNodeRef} {...attributes} {...listeners}><DragVertical className='size-3' /></div>
+      <div ref={setActivatorNodeRef} {...attributes} {...listeners}>
+        <DragVertical className="size-3" />
+      </div>
       <button
         data-testid="is-done"
         className="size-4 border"
@@ -106,9 +114,14 @@ export const TodoRow = ({ todo: initTodo }: Props) => {
         />
       ) : (
         <div className="flex grow justify-between">
-          <span data-testid="content">{todo.content}-{todo.executionDate}</span>
+          <span data-testid="content">
+            {todo.content}-{todo.executionDate}
+          </span>
           <div className="flex gap-1">
-            <button data-testid="start-edit-content" onClick={() => startEdit('content')}>
+            <button
+              data-testid="start-edit-content"
+              onClick={() => startEdit('content')}
+            >
               <PencilSquare className="size-4" />
             </button>
             <button
