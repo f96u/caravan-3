@@ -15,7 +15,7 @@ type Props = {
 }
 
 export const TodoRow = ({ todo: initTodo }: Props) => {
-  const [todo, setTodo] = useState <Schema['Todo']['type'] | null>(initTodo)
+  const [todo, setTodo] = useState<Schema['Todo']['type'] | null>(initTodo)
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition } =
     useSortable({ id: initTodo.id })
   const [editState, setEditState] = useState<
@@ -76,6 +76,7 @@ export const TodoRow = ({ todo: initTodo }: Props) => {
 
   return todo ? (
     <div
+      data-testid="todo-row"
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
       className="flex items-center gap-2 border bg-white px-3 py-1"
@@ -105,7 +106,7 @@ export const TodoRow = ({ todo: initTodo }: Props) => {
         />
       ) : (
         <div className="flex grow justify-between">
-          {todo.content}-{todo.executionDate}
+          <span data-testid="content">{todo.content}-{todo.executionDate}</span>
           <div className="flex gap-1">
             <button data-testid="start-edit-content" onClick={() => startEdit('content')}>
               <PencilSquare className="size-4" />

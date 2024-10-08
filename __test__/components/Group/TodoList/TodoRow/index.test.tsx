@@ -1,5 +1,6 @@
 import type { Schema } from '@/amplify/data/resource'
 import { TodoRow } from '@/src/components/Group/TodoList/TodoRow'
+import { amplifyClient } from '@/src/lib/amplifyClient'
 import '@testing-library/jest-dom'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 
@@ -35,7 +36,7 @@ describe('TodoRow', () => {
   })
 
   describe('チェックボックスの動作', () => {
-    it('チェックなし', () => {
+    it('isDoneがfalseの時チェックなし', () => {
       act(() => {
         render(<TodoRow {...createProps()} />)
       })
@@ -43,7 +44,7 @@ describe('TodoRow', () => {
       expect(screen.queryByTestId('check-icon')).toBeNull()
     })
 
-    it('チェックあり', () => {
+    it('isDoneがtrueの時チェックあり', () => {
       act(() => {
         render(<TodoRow {...createProps({ todo: { isDone: true } })} />)
       })
@@ -51,9 +52,22 @@ describe('TodoRow', () => {
       expect(screen.getByTestId('check-icon')).toBeInTheDocument()
     })
 
-    it.todo('client.modelsのupdateが呼ばれること')
+    it('チェックボックスを押した時の動作', async () => {
+      const spyUpdate = jest.spyOn(amplifyClient, 'update').mockResolvedValue({ data: mockTodo({ isDone: true }) })
+      
+      act(() => {
+        render(<TodoRow {...createProps()} />)
+      })
+      
+      expect(screen.queryByTestId('check-icon')).toBeNull()
 
-    it.todo('updateの後にtodoが更新され、editStateが元に戻ること')
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('is-done'))
+        expect(spyUpdate).toHaveBeenCalled()
+      })
+      // NOTE: Todoの状態が更新されていること
+      expect(screen.queryByTestId('check-icon')).toBeInTheDocument()
+    })
   })
 
   describe('contentの編集', () => {
@@ -84,14 +98,27 @@ describe('TodoRow', () => {
       expect(screen.getByTestId('edit-content')).toHaveValue('change')
     })
 
-    it.todo('blur時にmodelsのupdateが走ること')
+    describe('blur時', () => {
+      let spyUpdate: jest.SpyInstance
 
-    it.skip('blur時にinputが消えていること', async () => {
-      await act(async () => {
-        fireEvent.blur(screen.getByTestId('edit-content'))
+      beforeEach(async () => {
+        spyUpdate = jest.spyOn(amplifyClient, 'update').mockResolvedValue({ data: mockTodo({ content: 'change' }) })
+        await act(async () => {
+          fireEvent.blur(screen.getByTestId('edit-content'))
+        })
       })
 
-      expect(screen.queryByTestId('edit-content')).toBeNull()
+      it('modelsのupdateが走ること', () => {
+        expect(spyUpdate).toHaveBeenCalled()
+      })
+
+      it('inputが消えていること', () => {
+        expect(screen.queryByTestId('edit-content')).toBeNull()
+      })
+
+      it('更新された内容が表示されていること', () => {
+        expect(screen.getByTestId('content')).toHaveTextContent('change')
+      })
     })
   })
 
@@ -126,17 +153,52 @@ describe('TodoRow', () => {
         '2024-12-31',
       )
     })
-    
-    it.todo('blur時にmodelsのupdateが走ること')
 
-    it.skip('blur時にinputが消えていること', async () => {
-      await act(async () => {
-        fireEvent.blur(screen.getByTestId('edit-execution-date'))
+    describe('blur時', () => {
+      let spyUpdate: jest.SpyInstance
+
+      beforeEach(async () => {
+        spyUpdate = jest.spyOn(amplifyClient, 'update').mockResolvedValue({ data: mockTodo({ executionDate: '2024-12-31' }) })
+        await act(async () => {
+          fireEvent.blur(screen.getByTestId('edit-execution-date'))
+        })
       })
 
-      expect(screen.queryByTestId('edit-execution-date')).toBeNull()
+      it('modelsのupdateが走ること', () => {
+        expect(spyUpdate).toHaveBeenCalled()
+      })
+
+      it('inputが消えていること', () => {
+        expect(screen.queryByTestId('edit-execution-date')).toBeNull()
+      })
+
+      it('更新された内容が表示されていること', () => {
+        expect(screen.getByTestId('content')).toHaveTextContent('2024-12-31')
+      })
     })
   })
 
-  it.todo('削除時にremoveが呼ばれること')
+  describe('削除', () => {
+    let spyRemove: jest.SpyInstance
+
+    beforeEach(async () => {
+      spyRemove = jest.spyOn(amplifyClient, 'remove').mockResolvedValue({ data: mockTodo() })
+
+      act(() => {
+        render(<TodoRow {...createProps()} />)
+      })
+
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('remove'))
+      })
+    })
+
+    it('removeが呼ばれること', async () => {
+      expect(spyRemove).toHaveBeenCalled()
+    })
+
+    it('TodoRowが消えていること', () => {
+      expect(screen.queryByTestId('todo-row')).toBeNull()
+    })
+  })
 })
