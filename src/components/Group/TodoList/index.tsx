@@ -1,4 +1,5 @@
 import type { Schema } from '@/amplify/data/resource'
+import { amplifyClient } from '@/src/lib/amplifyClient'
 import type { DragEndEvent, UniqueIdentifier } from '@dnd-kit/core'
 import {
   closestCenter,
@@ -14,11 +15,8 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
-import { generateClient } from 'aws-amplify/api'
 import { useEffect, useState } from 'react'
 import { TodoRow } from './TodoRow'
-
-const client = generateClient<Schema>()
 
 type Props = {
   group: Schema['Group']['type']
@@ -62,7 +60,7 @@ export const TodoList = ({ group }: Props) => {
         orderList.indexOf(over.id),
       )
       setOrderList(nextOrderList)
-      await client.models.Group.update({
+      await amplifyClient.update('Group', {
         id: group.id,
         order: nextOrderList.map((o) => `${o}`),
       })
@@ -78,13 +76,7 @@ export const TodoList = ({ group }: Props) => {
       <SortableContext items={orderList} strategy={verticalListSortingStrategy}>
         {orderList.map((id) => {
           const todo = todos.find((todo) => todo.id === id)
-          return (
-            todo && (
-              <div key={todo.id} className="flex items-center gap-2">
-                <TodoRow todo={todo} />
-              </div>
-            )
-          )
+          return todo && <TodoRow key={todo.id} todo={todo} />
         })}
       </SortableContext>
     </DndContext>

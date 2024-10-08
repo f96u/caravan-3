@@ -1,13 +1,12 @@
 import type { Schema } from '@/amplify/data/resource'
-import { generateClient } from 'aws-amplify/api'
+import { amplifyClient } from '@/src/lib/amplifyClient'
 import { useEffect, useState } from 'react'
 
-const client = generateClient<Schema>()
 export const useGroup = () => {
   const [groups, setGroups] = useState<Array<Schema['Group']['type']>>([])
 
   useEffect(() => {
-    const sub = client.models.Group.observeQuery().subscribe({
+    const sub = amplifyClient.observeQuery('Group').subscribe({
       next: ({ items }) => {
         setGroups([...items])
       },
@@ -16,7 +15,7 @@ export const useGroup = () => {
   }, [])
 
   const createGroup = async () => {
-    await client.models.Group.create({
+    await amplifyClient.create('Group', {
       name: window.prompt('Group name'),
       order: [],
     })
