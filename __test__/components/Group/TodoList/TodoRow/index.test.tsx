@@ -162,11 +162,9 @@ describe('TodoRow', () => {
       let spyUpdate: jest.SpyInstance
 
       beforeEach(async () => {
-        spyUpdate = jest
-          .spyOn(amplifyClient, 'update')
-          .mockResolvedValue({
-            data: mockTodo({ executionDate: '2024-12-31' }),
-          })
+        spyUpdate = jest.spyOn(amplifyClient, 'update').mockResolvedValue({
+          data: mockTodo({ executionDate: '2024-12-31' }),
+        })
         await act(async () => {
           fireEvent.blur(screen.getByTestId('edit-execution-date'))
         })
